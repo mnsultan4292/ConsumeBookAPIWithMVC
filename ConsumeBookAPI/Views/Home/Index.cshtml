@@ -1,0 +1,97 @@
+﻿@model IEnumerable<BookModel>
+@{ Layout = "_Layout"; ViewBag.Title = "All Books";}
+
+
+<h2>Book Information</h2>
+
+@{ 
+    int count = 0;
+    if (TempData["Success"] != null)
+    {
+        <span syle="color:red;">@TempData["Success"].ToString()</span>
+    }
+}
+
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <input type="hidden" name="BookId" id="hiddenBookId"/>
+        <div class="col-md-6" style="margin-top:10px;">
+            <lable>Enter Book Name</lable>
+            <input type="text" id="txtBookName" name="BookName" class="form-control" />
+            <lable>Enter Course Name</lable>
+            <input type="text" id="txtCourseName" name="CourseName" class="form-control" />
+            <div class="row" style="margin-top:10px;">
+                <a asp-action="Index" style="margin-left: 14px; margin-right: 14px;" class="btn btn-primary">Get Book</a>
+                <button type="submit" class="btn btn-primary">Post Book</button>
+            </div>
+        </div>
+        <div class="col-md-6" style="margin-top:10px;">
+            <lable>Enter Book Author</lable>
+            <input type="text" id="txtBookAuthor" name="BookAuthor" class="form-control" />
+            <lable>Enter Purchase Date</lable>
+            <input type="text" id="txtBookPurchaseDate" name="PurchaseDate" class="form-control" />
+        </div>
+    </div>
+}
+
+<table class="table table-sm table-striped table-bordered" style="margin-top:10px;">
+    <thead>
+        <tr>
+            <th>Sr.No</th>
+            <th>Book Name</th>
+            <th>Course Name</th>
+            <th>Book Auther</th>
+            <th>Purchase Date</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            count++;
+            <tr>
+                <td>@count</td>
+                <td>@item.BookName</td>
+                <td>@item.CourseName</td>
+                <td>@item.BookAuthor</td>
+                <td>@item.PurchaseDate</td>
+                <td>
+                    <intput type="button" style="cursor: pointer !important;" onclick="MyFunction(@item.BookId)" class="btn btn-primary">
+                        Edit
+                    </intput>
+                </td>
+                <td>
+                    <a asp-action="DeleteBook"
+                       asp-controller="Home"
+                       asp-route-BookId=@item.BookId
+                       style="cursor: pointer !important;" class="btn btn-danger">
+                        Delete
+                        @*<input type="hidden" value="@item.BookId" name="BookId" />*@
+                    </a>
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+<script>
+    function MyFunction(BookId) {
+        $.ajax({
+            type: 'GET',
+            url: ' ../Home/GetBook?BookId=' + BookId,
+            success: function (result) {
+                $('#txtBookName').val(result.bookName);
+                $('#txtCourseName').val(result.courseName);
+                $('#txtBookAuthor').val(result.bookAuthor);
+                $('#txtBookPurchaseDate').val(result.purchaseDate);
+                $('#hiddenBookId').val(result.bookId);
+            }
+        });
+        
+    }
+</script>
+
